@@ -2,11 +2,9 @@
 
 namespace App\Exceptions;
 
-use App\Exceptions\BusinessException;
-
 class EvaluationAlreadyApprovedException extends BusinessException
 {
-    protected $message = 'La evaluación ya fue aprobada o está pendiente, by Marrrr.';
+    protected $message = 'La evaluación ya fue aprobada o está pendiente.';
 
     public function status(): int
     {

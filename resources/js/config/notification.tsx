@@ -3,6 +3,7 @@ import { CheckCircle2, FileUp, AlertCircle, Bell, LucideIcon } from "lucide-reac
 export interface NotificationMeta {
     title?: string;
     role?: string;
+    message?: string;
     document?: string;
     status?: number | null;
     comment?: string | null;
@@ -68,6 +69,18 @@ export const NOTIFICATION_CONFIG: Record<string, NotificationConfig> = {
         color: 'text-green-500',
         bg: 'bg-green-500/10 dark:bg-green-500/20',
         render: () => `La formalización de prácticas ha sido <span class="text-green-600 dark:text-green-500 font-medium">aprobada</span>.`
+    },
+    EVALUATION_UPLOAD: {
+        icon: FileUp,
+        color: 'text-blue-500',
+        bg: 'bg-blue-500/10 dark:bg-blue-500/20',
+        render: (meta) => meta.message || 'Se ha calificado una evaluación de supervisión.'
+    },
+    EVALUATION_VALIDATION: {
+        icon: (status?: number | null) => status === 1 ? CheckCircle2 : AlertCircle,
+        color: (status?: number | null) => status === 1 ? 'text-green-500' : 'text-amber-500',
+        bg: (status?: number | null) => status === 1 ? 'bg-green-500/10 dark:bg-green-500/20' : 'bg-amber-500/10 dark:bg-amber-500/20',
+        render: (meta) => meta.message || 'Se ha actualizado el estado de una evaluación de supervisión.'
     }
 };
 

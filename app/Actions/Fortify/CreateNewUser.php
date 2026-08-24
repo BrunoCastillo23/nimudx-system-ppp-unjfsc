@@ -24,12 +24,17 @@ class CreateNewUser implements CreatesNewUsers
             'password' => $this->passwordRules(),
         ])->validate();
 
+        // NOTA: Features::registration() está deshabilitado en config/fortify.php.
+        // Esta acción no forma parte del flujo real de alta de usuarios (ver
+        // App\Services\Registration\UserRegistrationService), que es quien crea
+        // la Person/Company y vincula el registro polimórfico 'authenticable'
+        // correctamente. No asignamos authenticable_id/type aquí para evitar
+        // vincular por error el usuario a una Person incorrecta si esta ruta
+        // llegara a activarse sin un rediseño explícito de este flujo.
         return User::create([
             'name' => $input['name'],
             'email' => $input['email'],
             'password' => $input['password'],
-            'authenticable_id' => 1, // This should probably be dynamic but keeping consistency with existing logic
-            'authenticable_type' => \App\Models\Person::class,
         ]);
     }
 }

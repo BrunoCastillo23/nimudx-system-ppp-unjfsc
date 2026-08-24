@@ -41,9 +41,71 @@
 ```
 ---
 
-### 1. Modo Desarrollo (Local - Híbrido)
+### 1. Modo Desarrollo 100% Dockerizado (recomendado para el equipo)
 
-En el entorno de desarrollo, la base de datos corre aislada en un contenedor Docker, mientras que Laravel y React se ejecutan de forma nativa en tu máquina local para facilitar una depuración rápida y aprovechar el *hot-reload*.
+Esta es la forma más rápida de empezar a trabajar en el proyecto sin instalar PHP, Composer ni Node en tu máquina — todo corre dentro de contenedores, con hot-reload real (los cambios que hagas en tu editor se reflejan al instante, tanto en PHP como en React).
+
+#### Prerrequisitos
+* Docker Desktop (con WSL2 backend si estás en Windows)
+
+Eso es todo. No necesitas PHP, Composer ni Node instalados localmente para este modo.
+
+#### Pasos
+
+1. **Clonar el repositorio**
+    ```bash
+    git clone https://github.com/martii-n/system-ppp-unjfsc.git
+    cd system-ppp-unjfsc
+    ```
+
+2. **Levantar todo el entorno de desarrollo**
+    ```bash
+    docker compose --profile dev up --build
+    ```
+    La primera vez tardará varios minutos (construye la imagen, instala Composer y npm dentro del contenedor). Las siguientes veces arranca en segundos, porque `vendor/` y `node_modules/` quedan guardados en volúmenes de Docker que persisten entre reinicios.
+
+    Este comando levanta automáticamente:
+    - `db-dev`: MariaDB (puerto `3307` hacia el host)
+    - `app-dev`: Laravel + Vite + cola + Pail (logs en vivo), con hot-reload
+
+    El propio contenedor `app-dev` se encarga de: crear el `.env` si no existe, generar `APP_KEY`, esperar a que la base de datos esté lista, correr `migrate --seed` (es seguro repetirlo en cada arranque, no duplica datos), e iniciar todos los procesos. No hace falta que edites nada a mano.
+
+3. **Abrir el proyecto**
+    ```
+    http://localhost:8000
+    ```
+    Credenciales del usuario administrador creado automáticamente por el seeder:
+    - **Email:** `admin@unjfsc.edu.pe`
+    - **Password:** `password`
+
+4. **Ver los logs** (server, queue, vite y Pail corren todos dentro del mismo contenedor)
+    ```bash
+    docker compose logs -f app-dev
+    ```
+
+5. **Detener el entorno** (los datos de la base de datos y las dependencias instaladas se conservan)
+    ```bash
+    docker compose --profile dev down
+    ```
+    ⚠️ No agregues `-v` a menos que quieras borrar también la base de datos y las dependencias instaladas (`docker compose --profile dev down -v`).
+
+6. **Si cambias el `Dockerfile.dev` o necesitas reconstruir la imagen**
+    ```bash
+    docker compose --profile dev up --build
+    ```
+
+7. **Si necesitas correr un comando puntual dentro del contenedor** (por ejemplo, un nuevo `artisan make:`, o instalar un paquete de Composer/npm)
+    ```bash
+    docker exec -it app-dev php artisan make:controller EjemploController
+    docker exec -it app-dev composer require paquete/nuevo
+    docker exec -it app-dev npm install paquete-nuevo
+    ```
+
+---
+
+### 2. Modo Desarrollo Híbrido (Docker solo para la BD)
+
+Alternativa si prefieres depurar con tu editor conectado directamente al proceso de PHP (breakpoints nativos, Xdebug, etc.) en vez de dentro de un contenedor. La base de datos corre aislada en Docker, mientras que Laravel y React se ejecutan de forma nativa en tu máquina local.
 
 ### Prerrequisitos
 Asegúrate de tener instalado en tu sistema local:
@@ -83,16 +145,21 @@ Asegúrate de tener instalado en tu sistema local:
     npm install
     ```
 6. **Ejecución del Entorno de Desarrollo**
-    Para comenzar a trabajar, necesitas levantar tanto el servidor de PHP como el compilador de Vite. Ejecuta los siguientes comandos (se recomienda usar pestañas de terminal separadas):
-    ```bash
-    composer run dev
-    ```
+    Para comenzar a trabajar, necesitas levantar tanto el servidor de PHP como el compilador de Vite.
+    - **Windows** (Pail/`pcntl` no está disponible de forma nativa en Windows, por eso hay un script separado sin él):
+      ```bash
+      composer run dev:windows
+      ```
+    - **Mac/Linux:**
+      ```bash
+      composer run dev
+      ```
 
     http://localhost:8000
 
 ---
 
-### 2. Modo Producción (VPS + Docker Completo)
+### 3. Modo Producción (VPS + Docker Completo)
 El entorno de producción corre de forma 100% contenerizada dentro del VPS. Todo el tráfico web externo está completamente blindado y anonimizado utilizando Cloudflare Tunnels, eliminando la necesidad de exponer puertos públicos del servidor al internet.
 
 ### Prerrequisitos en el VPS

@@ -26,6 +26,7 @@ interface Notification {
     actor: string;
     title: string;
     role: string;
+    message: string | null;
     document: string;
     status: number | null;
     comment: string | null;
@@ -289,6 +290,7 @@ function NotificationItem({ notification, onClick, onDelete, onToggleRead }: {
     const meta: NotificationMeta = {
         title: notification.title,
         role: notification.role,
+        message: notification.message ?? undefined,
         document: notification.document,
         status: notification.status,
         comment: notification.comment,

@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
 import AcademicSearch from '@/components/academic/academic-search';
 import AcademicPagination from '@/components/academic/academic-pagination';
-import { useAcademicTable } from '@/hooks/use-academic-table';
+import { useConfigTable } from '@/hooks/use-config-table';
 import { usePage } from '@inertiajs/react';
 
 import CreateFacultyModal from './partials/create-faculty-modal';
@@ -44,12 +44,12 @@ export default function Faculties({ faculties }: Props) {
         setLocalPage,
         localTotalPages,
         handlePageChange
-    } = useAcademicTable<Faculty>({
+    } = useConfigTable<Faculty>({
         endpoint: '',
         initialData: faculties,
         isAdmin: false,
         pageSize: 10,
-        localSearchFn: (faculty, search) =>
+        onLocalSearch: (faculty, search) =>
             faculty.name.toLowerCase().includes(search) ||
             `#${faculty.id}`.includes(search)
     });

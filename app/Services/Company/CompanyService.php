@@ -9,12 +9,11 @@ use Illuminate\Support\Collection;
 
 class CompanyService
 {
-
     public function verifyCompany(string $ruc): ?array
     {
         $company = Company::query()->where('ruc', $ruc)->first();
 
-        if (!$company) {
+        if (! $company) {
             return null;
         }
 
@@ -24,19 +23,19 @@ class CompanyService
             'address' => $company->address,
             'phone' => $company->phone,
             'email' => $company->email,
-            'areas' => $this->listAreas($company->id)
+            'areas' => $this->listAreas($company->id),
         ];
     }
 
     public function registerCompany(array $data): Company
     {
         $company = Company::query()->create([
-            'name'    => $data['name'],
-            'ruc'     => $data['ruc'],
-            'razon'   => $data['razon'] ?? $data['name'],  // fallback: si no mandan razón social, usa el nombre
+            'name' => $data['name'],
+            'ruc' => $data['ruc'],
+            'razon' => $data['razon'] ?? $data['name'],  // fallback: si no mandan razón social, usa el nombre
             'address' => $data['address'] ?? '',
-            'phone'   => $data['phone'] ?? '',
-            'email'   => $data['email'] ?? '',
+            'phone' => $data['phone'] ?? '',
+            'email' => $data['email'] ?? '',
         ]);
 
         return $company;
@@ -49,11 +48,18 @@ class CompanyService
         return $areas;
     }
 
+    /**
+     * Registers a staff member for a company.
+     *
+     * Espera en $data: company_id, user_id, position_id, email, phone.
+     * (is_select/status quedan en su default de BD si no se envían).
+     */
     public function registerStaff(array $data): Staff
     {
         $staff = Staff::query()->create([
-            'name' => $data['name'],
-            'position' => $data['position'],
+            'company_id' => $data['company_id'],
+            'user_id' => $data['user_id'],
+            'position_id' => $data['position_id'],
             'email' => $data['email'],
             'phone' => $data['phone'],
         ]);

@@ -12,7 +12,7 @@ use App\Exceptions\Semester\SemesterRollbackNotAllowedException;
 use App\Models\Assignment;
 use App\Models\Resource;
 use App\Models\Semester;
-use Cassandra\Collection;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class SemesterService

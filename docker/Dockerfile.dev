@@ -1,40 +1,32 @@
+# === Imagen de Desarrollo: PHP-FPM + Node (hot-reload, bind mount de código) ===
 FROM php:8.4-fpm
 
-# Instalar dependencias del sistema (Agregamos Node.js aquí de forma limpia)
+# Dependencias del sistema + Node.js.
+# pcntl se instala aquí (a diferencia de Windows nativo, donde no existe),
+# así que dentro de este contenedor sí funciona Laravel Pail.
+# mariadb-client aporta `mysqladmin`, usado por el entrypoint para esperar a la BD.
 RUN apt-get update && apt-get install -y \
-    git \
-    unzip \
-    zip \
-    curl \
-    libpng-dev \
-    libjpeg-dev \
-    libfreetype6-dev \
-    libonig-dev \
-    libxml2-dev \
-    libzip-dev \
-    mariadb-client \
+    git unzip zip curl libpng-dev libjpeg-dev libfreetype6-dev libonig-dev libxml2-dev libzip-dev mariadb-client \
     && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
-    && apt-get install -y nodejs
+    && apt-get install -y nodejs \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Instalar extensiones PHP
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install pdo_mysql mbstring zip exif pcntl gd bcmath
 
-# Instalar Composer
-RUN curl -sS https://getcomposer.org/installer | php && \
-    mv composer.phar /usr/local/bin/composer && \
-    chmod +x /usr/local/bin/composer
+# Composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 WORKDIR /var/www
 
-# Copiar archivos de configuración para aprovechar la caché de capas de Docker
-COPY composer.json composer.lock ./
-RUN composer install --no-interaction --no-scripts --no-autoloader
-
-# Nota: Quitamos los comandos COPY . . y npm ci de aquí para desarrollo.
-# Los archivos se sincronizan mediante los volúmenes de docker-compose
-# y las dependencias las instalaremos al levantar el contenedor.
+# El código fuente NO se copia aquí: se monta como volumen desde
+# docker-compose.yml (bind mount), para que los cambios en el host se
+# reflejen al instante (hot-reload). vendor/ y node_modules/ se instalan
+# en tiempo de arranque (ver docker/entrypoint.dev.sh) dentro de volúmenes
+# Docker nombrados, separados del bind mount.
+COPY docker/entrypoint.dev.sh /usr/local/bin/entrypoint.dev.sh
+RUN chmod +x /usr/local/bin/entrypoint.dev.sh
 
 EXPOSE 8000 5173
 
-# Usaremos un script de entrada (entrypoint) o el comando directo en docker-compose
+ENTRYPOINT ["/usr/local/bin/entrypoint.dev.sh"]

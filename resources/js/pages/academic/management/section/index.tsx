@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import AcademicSearch from '@/components/academic/academic-search';
 import AcademicPagination from '@/components/academic/academic-pagination';
-import { useAcademicTable } from '@/hooks/use-academic-table';
+import { useConfigTable } from '@/hooks/use-config-table';
 import {
     Table,
     TableBody,
@@ -36,12 +36,12 @@ export default function Sections({ schools }: Props) {
         setLocalPage,
         localTotalPages,
         handlePageChange
-    } = useAcademicTable<School>({
+    } = useConfigTable<School>({
         endpoint: '',
         initialData: schools,
         isAdmin: false,
         pageSize: 10,
-        localSearchFn: (school, search) => 
+        onLocalSearch: (school, search) => 
             school.name.toLowerCase().includes(search) || 
             (school.faculty?.name || '').toLowerCase().includes(search)
     });

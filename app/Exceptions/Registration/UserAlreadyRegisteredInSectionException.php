@@ -11,7 +11,7 @@ class UserAlreadyRegisteredInSectionException extends BusinessException
     public function __construct(string $roleName)
     {
         $this->roleName = $roleName;
-        $this->message = 'El usuario ya se encuentra registrado en esta sección como ' . $roleName . '. Revise la lista.';
+        $this->message = 'El usuario ya se encuentra registrado en esta sección como '.$roleName.'. Revise la lista.';
     }
 
     public function status(): int
@@ -21,6 +21,6 @@ class UserAlreadyRegisteredInSectionException extends BusinessException
 
     public function code(): string
     {
-        return 'USER_REGISTRATION_ROLE_NOT_ALLOWED';
+        return 'USER_ALREADY_REGISTERED_IN_SECTION';
     }
 }

@@ -1,3 +1,11 @@
+/**
+ * @deprecated Este hook quedó duplicado con `useConfigTable` (ver `use-config-table.tsx`),
+ * que cubre exactamente el mismo caso de uso (tabla con paginación/búsqueda local o de backend)
+ * y además sincroniza el estado con la URL (deep linking). Las 4 páginas que lo usaban
+ * (facultades, escuelas, secciones, semestres) ya fueron migradas a `useConfigTable`.
+ * No quedan consumidores de este hook; se conserva el archivo solo por si algo externo
+ * lo importa todavía. Preferir `useConfigTable` en código nuevo.
+ */
 import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { toast } from 'sonner';
@@ -78,7 +86,7 @@ export function useAcademicTable<T = any>({
             setLastFetchConf({ url, params: mergedParams });
         } catch (error) {
             console.log(error);
-            toast.error("Error al obtener los datos. waaa");
+            toast.error("Error al obtener los datos.");
         } finally {
             setIsSearching(false);
         }

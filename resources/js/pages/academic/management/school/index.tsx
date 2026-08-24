@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
 import AcademicSearch from '@/components/academic/academic-search';
 import AcademicPagination from '@/components/academic/academic-pagination';
-import { useAcademicTable } from '@/hooks/use-academic-table';
+import { useConfigTable } from '@/hooks/use-config-table';
 import { usePage } from '@inertiajs/react';
 import {
     Table,
@@ -43,12 +43,12 @@ export default function Schools({ schools, faculties }: Props) {
         setLocalPage,
         localTotalPages,
         handlePageChange
-    } = useAcademicTable<School>({
+    } = useConfigTable<School>({
         endpoint: '',
         initialData: schools,
         isAdmin: false,
         pageSize: 10,
-        localSearchFn: (school, search) =>
+        onLocalSearch: (school, search) =>
             school.name.toLowerCase().includes(search) ||
             (school.faculty?.name || '').toLowerCase().includes(search)
     });

@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
 import AcademicSearch from '@/components/academic/academic-search';
 import AcademicPagination from '@/components/academic/academic-pagination';
-import { useAcademicTable } from '@/hooks/use-academic-table';
+import { useConfigTable } from '@/hooks/use-config-table';
 import { usePage } from '@inertiajs/react';
 
 import BackSemesterModal from './partials/back-semester-modal';
@@ -46,12 +46,12 @@ export default function Semesters({ semesters }: Props) {
         setLocalPage,
         localTotalPages,
         handlePageChange
-    } = useAcademicTable<Semester>({
+    } = useConfigTable<Semester>({
         endpoint: '',
         initialData: semesters,
         isAdmin: false,
         pageSize: 10,
-        localSearchFn: (semester, search) => 
+        onLocalSearch: (semester, search) => 
             semester.code.toLowerCase().includes(search) || 
             semester.cycle.toLowerCase().includes(search)
     });

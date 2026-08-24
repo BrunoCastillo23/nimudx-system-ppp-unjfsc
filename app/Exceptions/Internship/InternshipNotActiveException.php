@@ -6,7 +6,7 @@ use App\Exceptions\BusinessException;
 
 class InternshipNotActiveException extends BusinessException
 {
-    protected $message = 'Ya existe una práctica activa. No se puede registrar una nueva';
+    protected $message = 'No existe una práctica activa para realizar esta acción.';
 
     public function status(): int
     {
