@@ -117,8 +117,8 @@ Asegúrate de tener instalado en tu sistema local:
 
 1. **Clonar el repositorio (rama por defecto/main):**
    ```bash
-   git clone https://github.com/martii-n/system-ppp-unjfsc.git
-   cd system-ppp-unjfsc
+   git clone https://github.com/BrunoCastillo23/nimudx-system-ppp-unjfsc.git
+   cd nimudx-system-ppp-unjfsc
 2. **Configurar el archivo de entorno local**
     ```bash
     cp .env.example .env
